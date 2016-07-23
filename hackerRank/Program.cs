@@ -33,14 +33,15 @@ class Solution
 	public static List<int> HandleTestCase(TestCase testCase)
 	{
 		var stack = new Stack<int>();
-		if (FindPermutation(stack, 1, testCase))
+		var hashSet = new HashSet<int>();
+		if (FindPermutation(stack, hashSet, 1, testCase))
 		{
 			return stack.Reverse().ToList();
 		}
 		return new List<int>() {-1};
 	}
 
-	private static bool FindPermutation(Stack<int> stack, int currentPosition, TestCase testCase)
+	private static bool FindPermutation(Stack<int> stack, HashSet<int> hashSet, int currentPosition, TestCase testCase)
 	{
 		if (currentPosition > testCase.N)
 		{
@@ -48,19 +49,21 @@ class Solution
 			return stack.Sum() == testCase.CheckSum;
 		}
 		var candidates = GetCandidates(currentPosition, testCase);
-		if (candidates.Min >= 1 && candidates.Min <= testCase.N)
+		if (candidates.Min >= 1 && candidates.Min <= testCase.N && !hashSet.Contains(candidates.Min))
 		{
 			stack.Push(candidates.Min);
-			if (FindPermutation(stack, currentPosition + 1, testCase))
+			hashSet.Add(candidates.Min);
+			if (FindPermutation(stack, hashSet, currentPosition + 1, testCase))
 				return true;
-			stack.Pop();
+			hashSet.Remove(stack.Pop());
 		}
-		if (candidates.Max >= 1 && candidates.Max <= testCase.N)
+		if (candidates.Max >= 1 && candidates.Max <= testCase.N && !hashSet.Contains(candidates.Max))
 		{
 			stack.Push(candidates.Max);
-			if (FindPermutation(stack, currentPosition + 1, testCase))
+			hashSet.Add(candidates.Max);
+			if (FindPermutation(stack, hashSet, currentPosition + 1, testCase))
 				return true;
-			stack.Pop();
+			hashSet.Remove(stack.Pop());
 		}
 		return false;
 	}
