@@ -7,12 +7,7 @@ class Solution
 {
     static void Main(String[] args)
     {
-	    var sw = Stopwatch.StartNew();
-	    var res = HandleTestCase(new TestCase(5000, 2));
-	    Console.Out.WriteLine(res.Count);
-	    Console.Out.WriteLine(sw.Elapsed);
-		return;
-	    
+  
 	    int testCasesCount = GetTestCasesCount();
 
 	    foreach (TestCase testCase in ReadTestCases(testCasesCount))
