@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 class Solution
 {
     static void Main(String[] args)
     {
-  
 	    int testCasesCount = GetTestCasesCount();
 
 	    foreach (TestCase testCase in ReadTestCases(testCasesCount))
@@ -34,42 +32,68 @@ class Solution
 
 	public static List<int> HandleTestCase(TestCase testCase)
 	{
-		var stack = new Stack<int>(10000);
-		var hashSet = new int[10000];
-		if (FindPermutation(stack, hashSet, 1, testCase))
+		if (testCase.K == 0)
 		{
-			return stack.Reverse().ToList();
+			return CreatePrimitiveresult(testCase);
 		}
-		return new List<int>() {-1};
+		var used = new int[testCase.N+1];
+		var result = new int[testCase.N+1];
+		int tail = testCase.N;
+		while (tail>=1)
+		{
+			for (int i = 0; i < testCase.K && tail >= 1; i++)
+			{
+				if (!TryFillCell(testCase, tail, used, result))
+					return new List<int>(){-1};
+				tail--;
+			}
+			tail -= testCase.K;
+		}
+		int head = 1 + (testCase.N % testCase.K);
+		while (head <= testCase.N)
+		{
+			for (int i = 0; i < testCase.K && head <= testCase.N; i++)
+			{
+				if (! TryFillCell(testCase, head, used, result))
+					return new List<int>(){-1};
+				head++;
+			}
+			head += testCase.K;
+		}
+		return result.Skip(1).ToList();
 	}
 
-	private static bool FindPermutation(Stack<int> stack, int[] hashSet, int currentPosition, TestCase testCase)
+	private static List<int> CreatePrimitiveresult(TestCase testCase)
 	{
-		if (currentPosition > testCase.N)
+		var res = new List<int>(testCase.N);
+		for (int i = 1; i <= testCase.N; i++)
 		{
-			//TODO: more precise correctness checking with bit mask
-			return stack.Sum() == testCase.CheckSum;
+			res.Add(i);
 		}
-		var candidates = GetCandidates(currentPosition, testCase);
-		if (FindPermutation(stack, hashSet, currentPosition, testCase, candidates.Min)) 
+		return res;
+	}
+
+	private static bool TryFillCell(TestCase testCase, int position, int[] used, int[] result)
+	{
+		var cand = GetCandidates(position, testCase);
+		if (TestCandidate(used, testCase, cand.Min))
+		{
+			result[position] = cand.Min;
+			used[cand.Min] = 1;
 			return true;
-		if (FindPermutation(stack, hashSet, currentPosition, testCase, candidates.Max)) 
+		}
+		if (TestCandidate(used, testCase, cand.Max))
+		{
+			result[position] = cand.Max;
+			used[cand.Max] = 1;
 			return true;
+		}
 		return false;
 	}
 
-	private static bool FindPermutation(Stack<int> stack, int[] hashSet, int currentPosition, TestCase testCase, int item)
+	private static bool TestCandidate(int[] used, TestCase testCase, int item)
 	{
-		if (item >= 1 && item <= testCase.N && hashSet[item] == 0)
-		{
-			stack.Push(item);
-			hashSet[item] = 1;
-			if (FindPermutation(stack, hashSet, currentPosition + 1, testCase))
-				return true;
-			hashSet[item] = 0;
-			stack.Pop();
-		}
-		return false;
+		return item >= 1 && item <= testCase.N && used[item] == 0;
 	}
 
 	private static int GetTestCasesCount()
@@ -113,38 +137,3 @@ internal class TestCase
 	}
 }
 
-internal class IntSet
-{
-	int[] state;
-
-	public IntSet(int copasity = 512)
-	{
-		state = new int[copasity];
-		for (int i = 0; i < copasity; i++)
-		{
-			state[i] = 0;
-		}
-	}
-
-	public void Add(int i)
-	{
-		int bucketIndex = i/8;
-		int bucket = state[bucketIndex];
-
-	}
-
-	private int GetStateBucket(int i)
-	{
-		throw new NotImplementedException();
-	}
-
-	public void Remove(int i)
-	{
-		
-	}
-
-	public void Contains(int i)
-	{
-		
-	}
-}
