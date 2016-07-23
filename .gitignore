@@ -1,0 +1,16 @@
+_ReSharper*
+bin/
+deploy/
+*.swp
+obj/
+*.user
+*.suo
+.gitk*
+*AssemblyTitle.cs
+.nuget/
+packages/
+node_modules
+.idea
+Kanso.Monitoring/settings
+Kanso.Monitoring/logs
+Kanso.Monitoring/log.config.xml
