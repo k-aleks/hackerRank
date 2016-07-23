@@ -1,154 +1,107 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using FluentAssertions;
-using NUnit.Framework;
 
 class Solution
 {
     static void Main(String[] args)
     {
-        int arraySize = 0;
-        int rotatesCount = 0;
-        int queriesCount = 0;
-        ParseFirstLineArguments(out arraySize, out rotatesCount, out queriesCount, Console.ReadLine());
+	    int testCasesCount = GetTestCasesCount();
 
-        LinkedList<string> arr = ParseArray(Console.ReadLine());
-
-        RotateArray(arr, rotatesCount);
-
-        foreach (var queryResult in PerformQueries(arr, ReadQueries(queriesCount)))
-        {
-            Console.WriteLine(queryResult);
-        }
+	    foreach (TestCase testCase in ReadTestCases(testCasesCount))
+	    {
+		    var result = HandleTestCase(testCase);
+		    foreach (var i in result)
+		    {
+			    Console.Write(i + " ");
+		    }
+			Console.WriteLine();
+	    }
     }
 
-    public static IEnumerable<string> PerformQueries(LinkedList<string> list, IEnumerable<int> queriesEnum)
-    {
-        var queries = queriesEnum.ToArray();
-        Array.Sort(queries);
+	private static List<TestCase> ReadTestCases(int testCasesCount)
+	{
+		var testCases = new List<TestCase>(testCasesCount);
+		for (int i = 0; i < testCasesCount; i++)
+		{
+			var inputNumbers = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+			testCases.Add(new TestCase(inputNumbers[0], inputNumbers[1]));
+		}
+		return testCases;
+	}
 
-        int currentQueryIndex = 0;
-        int currentElementIndex = 0;
+	public static List<int> HandleTestCase(TestCase testCase)
+	{
+		var stack = new Stack<int>();
+		if (FindPermutation(stack, 1, testCase))
+		{
+			return stack.Reverse().ToList();
+		}
+		return new List<int>() {-1};
+	}
 
-        foreach (var number in list)
-        {
-            if (currentQueryIndex >= queries.Length)
-                yield break;
-            if (queries[currentQueryIndex] == currentElementIndex++)
-            {
-                int nextQuery;
-                int prevQuery;
-                do
-                {
-                    nextQuery = currentQueryIndex >= queries.Length - 1 ? -1 : queries[currentQueryIndex + 1];
-                    prevQuery = queries[currentQueryIndex];
-                    currentQueryIndex++;
-                    yield return number;
-                } while (nextQuery == prevQuery);
+	private static bool FindPermutation(Stack<int> stack, int currentPosition, TestCase testCase)
+	{
+		if (currentPosition > testCase.N)
+		{
+			//TODO: more precise correctness checking with bit mask
+			return stack.Sum() == testCase.CheckSum;
+		}
+		var candidates = GetCandidates(currentPosition, testCase);
+		if (candidates.Min >= 1 && candidates.Min <= testCase.N)
+		{
+			stack.Push(candidates.Min);
+			if (FindPermutation(stack, currentPosition + 1, testCase))
+				return true;
+			stack.Pop();
+		}
+		if (candidates.Max >= 1 && candidates.Max <= testCase.N)
+		{
+			stack.Push(candidates.Max);
+			if (FindPermutation(stack, currentPosition + 1, testCase))
+				return true;
+			stack.Pop();
+		}
+		return false;
+	}
 
-            }
-        }
-    }
+	private static int GetTestCasesCount()
+	{
+		return int.Parse(Console.ReadLine());
+	}
 
-    private static IEnumerable<int> ReadQueries(int queriesCount)
-    {
-        for (int i = 0; i < queriesCount; i++)
-        {
-            yield return Int32.Parse(Console.ReadLine());
-        }
-    }
+	public static Candidates GetCandidates(int position, TestCase testCase)
+	{
+		var c1 = Math.Abs(position - testCase.K);
+		var c2 = Math.Abs(position + testCase.K);
+		return c1 < c2
+			? new Candidates() {Min = c1, Max = c2}
+			: new Candidates() {Min = c2, Max = c1};
+	}
 
-    public static void RotateArray(LinkedList<string> arr, int rotatesCount)
-    {
-        for (int i = 0; i < rotatesCount; i++)
-        {
-            RotateArray(arr);
-        }
-    }
-
-    public static void RotateArray(LinkedList<string> arr)
-    {
-        var last = arr.Last;
-        arr.RemoveLast();
-        arr.AddFirst(last.Value);
-    }
-
-    private static LinkedList<string> ParseArray(string input)
-    {
-        return new LinkedList<string>(input.Split(' '));
-    }
-
-    public static void ParseFirstLineArguments(out int arraySize, out int rotatesCount, out int queriesCount, string input)
-    {
-        var parts = input.Split(' ');
-        arraySize = Int32.Parse(parts[0]);
-        rotatesCount = Int32.Parse(parts[1]);
-        queriesCount = Int32.Parse(parts[2]);
-    }
 }
 
-[TestFixture]
-public class Tests
+internal struct Candidates
 {
-    [Test]
-    public void ParseFirstLineArguments()
-    {
-        int arraySize, rotatesCount, queriesCount;
-        Solution.ParseFirstLineArguments(out arraySize, out rotatesCount, out queriesCount, "1 2 3");
+	public int Min;
+	public int Max;
+}
 
-        arraySize.Should().Be(1);
-        rotatesCount.Should().Be(2);
-        queriesCount.Should().Be(3);
-    }
+internal class TestCase
+{
+	public TestCase(int n, int k)
+	{
+		N = n;
+		K = k;
+		CheckSum = GetArithmeticSequenceSum(1, n, n);
+	}
 
-    [Test]
-    public void RotateArray()
-    {
-        var arr = new LinkedList<string>(new string[] {"1","2","3"});
-        Solution.RotateArray(arr);
+	public int N { get; private set; }
+	public int K { get; private set; }
+	public int CheckSum { get; private set; }
 
-        arr.Should().Equal("3", "1", "2");
-    }
-
-    [Test]
-    public void RotateArrayTwoTimes()
-    {
-        var arr = new LinkedList<string>(new string[] {"1","2","3"});
-        Solution.RotateArray(arr, 2);
-
-        arr.Should().Equal("2", "3", "1");
-    }
-
-    [Test]
-    public void RotateArrayThreeTimes()
-    {
-        var arr = new LinkedList<string>(new string[] {"1","2","3"});
-        Solution.RotateArray(arr, 3);
-
-        arr.Should().Equal("1", "2", "3");
-    }
-
-    [Test]
-    public void PerformQueries1()
-    {
-        PerformQueries(new string[] {"1", "2", "3", "4"}, new int[] {0, 1, 2, 3}, new string[] {"1", "2", "3", "4"});
-        PerformQueries(new string[] {"1", "2", "3", "4"}, new int[] {3, 2, 1, 0}, new string[] {"1", "2", "3", "4"});
-        PerformQueries(new string[] {"1", "2", "3", "4"}, new int[] {3, 2, 1, 0}, new string[] {"1", "2", "3", "4"});
-        PerformQueries(new string[] {"1", "2", "3", "4"}, new int[] {3, 3, 2, 2, 1, 1, 0, 0}, new string[] {"1", "1", "2","2", "3", "3", "4", "4"});
-        PerformQueries(new string[] {"1", "2", "3", "4"}, new int[] {1, 2}, new string[] {"2", "3"});
-        PerformQueries(new string[] {"1", "2", "3", "4"}, new int[] {0, 1}, new string[] {"1", "2"});
-        PerformQueries(new string[] {"1", "2", "3", "4"}, new int[] {2, 3}, new string[] {"3", "4"});
-        return;
-    }
-
-    public void PerformQueries(string[] list, int[] queries, string[] expectedResult)
-    {
-        var result = Solution.PerformQueries(new LinkedList<string>(list), queries).ToArray();
-        result.Should().Equal(expectedResult);
-    }
-
-
+	private static int GetArithmeticSequenceSum(int first, int last, int elementsCount)
+	{
+		return (elementsCount*(first + last))/2;
+	}
 }
