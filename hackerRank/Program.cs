@@ -98,8 +98,11 @@ internal class Solution
 				int transportationCell;
 				if (ladders.TryGetValue(nextCell, out transportationCell))
 					nextCell = transportationCell;
-				if (!snakes.ContainsKey(nextCell))
-					yield return nextCell;
+				if (snakes.TryGetValue(nextCell, out transportationCell))
+					nextCell = transportationCell;
+				if (nextCell > 100)
+					continue;
+				yield return nextCell;
 			}
 		}
 	}
