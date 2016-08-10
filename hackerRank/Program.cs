@@ -28,37 +28,44 @@ internal class Solution
 		Console.Out.WriteLine(maxDepth);
 	}
 
-	public static void FindMaxHappy(List<Person> persons, List<Event> events, ref int currentDepth, ref int maxDepth)
+	public static bool FindMaxHappy(List<Person> persons, List<Event> events, ref int currentDepth, ref int maxDepth)
 	{
 		foreach (var person in persons.Where(p => !p.Taken))
 		{
 			person.Taken = true;
-			List<Event> possibleEvents = GetPossibleEvents(person, events);
+			var possibleEvents = GetPossibleEvents(person, events);
 			foreach (var ev in possibleEvents)
 			{
 				ev.Taken = true;
 				currentDepth++;
 				if (maxDepth < currentDepth)
+				{
 					maxDepth = currentDepth;
-				FindMaxHappy(persons, events, ref currentDepth, ref maxDepth);
+					if (maxDepth == persons.Count)
+						return true;
+				}
+				if (FindMaxHappy(persons, events, ref currentDepth, ref maxDepth))
+					return true;
 				currentDepth--;
 				ev.Taken = false;
 			}
 			person.Taken = false;
 		}
+		return false;
 	}
 
-	private static List<Event> GetPossibleEvents(Person person, List<Event> events)
+	private static IEnumerable<Event> GetPossibleEvents(Person person, List<Event> events)
 	{
-		var res = new List<Event>();
+		//var res = new List<Event>();
 		foreach (var ev in events)
 		{
 			if (!ev.Taken && person.Passions.Any(passion => ev.Passions.Contains(passion)))
 			{
-				res.Add(ev);
+				yield return ev;
+				//res.Add(ev);
 			}
 		}
-		return res;
+		//return res;
 	}
 }
 
