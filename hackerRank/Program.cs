@@ -8,7 +8,7 @@ internal class Solution
 {
 	private static void Main(String[] args)
 	{
-		Console.SetIn(new StreamReader("testinput.txt"));
+//		Console.SetIn(new StreamReader("testinput.txt"));
 
 		string firstLine = Console.ReadLine();
 		int[] parameters = firstLine.Split(' ').Select(Int32.Parse).ToArray();
@@ -43,14 +43,11 @@ internal class Solution
 		var orderedReviews = reviews.OrderBy(review => review.ReviewerId).ToList();
 		foreach (var review in orderedReviews)
 		{
-			var handledTokens = new HashSet<string>();
-			var separator = new []{' ', ',' , '.' , '!', '?', ':', '/', '\\', '\t', '-', '=', '+'};
-			foreach (var textToken in review.Text.Split(separator, StringSplitOptions.RemoveEmptyEntries))
+			foreach (var passionPair in dic)
 			{
-				if (dic.ContainsKey(textToken) && !handledTokens.Contains(textToken))
+				if (review.Text.IndexOf(passionPair.Key, StringComparison.InvariantCultureIgnoreCase) >= 0)
 				{
-					handledTokens.Add(textToken);
-					var passion = dic[textToken];
+					var passion = passionPair.Value;
 					if (passion.Current == null)
 					{
 						passion.Current = new PassionScore(review.ReviewerId, review.Score);
@@ -68,6 +65,7 @@ internal class Solution
 						}
 					}
 				}
+				
 			}
 		}
 		foreach (var passion in dic)
