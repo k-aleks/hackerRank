@@ -13,7 +13,6 @@ namespace hackerRank
 		{
 			var dt = Solution.UnixTimeStampToDateTime(1467720000);
 			dt.Date.Should().Be(new DateTime(2016, 07, 05));
-
 		}
 	}
 }
