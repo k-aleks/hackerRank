@@ -35,18 +35,16 @@ internal class Solution
 			}
 		}
 		List<Node> rootNodes = graph.Where(pair => !pair.Value.HasParent).Select(pair => pair.Value).ToList();
-		bool hasCycle = false;
 		foreach (var rootNode in rootNodes)
 		{
 			if (FindCycle(rootNode, graph))
 			{
-				hasCycle = true;
-				break;
+				return false;
 			}
 		}
 		if (graph.Count > 0)
 			return false;
-		return !hasCycle;
+		return true;
 	}
 
 	public static bool FindCycle(Node node, Dictionary<string, Node> graph)
