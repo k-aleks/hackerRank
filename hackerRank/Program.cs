@@ -8,21 +8,24 @@ internal class Solution
 {
 	private static void Main(String[] args)
 	{
-		int[] parameters = Console.ReadLine().Split(' ').Select(Int32.Parse).ToArray();
+		Console.SetIn(new StreamReader("testinput.txt"));
 
-		var dic = new Dictionary<string, Passion>();
+		string firstLine = Console.ReadLine();
+		int[] parameters = firstLine.Split(' ').Select(Int32.Parse).ToArray();
+
+		var dic = new Dictionary<string, Passion>(StringComparer.InvariantCultureIgnoreCase);
 		for (int i = 0; i < parameters[0]; i++)
 		{
-			var passion = Console.ReadLine();
+			var passion = Console.ReadLine().Trim();
 			dic.Add(passion, new Passion(i));
 		}
 
 		var reviews = new List<Review>();
 		for (int i = 0; i < parameters[1]; i++)
 		{
-			var lineTokens = Console.ReadLine().Split(' ').ToArray();
+			var lineTokens = Console.ReadLine().Split(new []{' '}, StringSplitOptions.RemoveEmptyEntries).ToArray();
 			int reviewerId = int.Parse(lineTokens[0]);
-			var reviewTime = UnixTimeStampToDateTime(double.Parse(lineTokens[1]));
+			var reviewTime = UnixTimeStampToDateTime(long.Parse(lineTokens[1]));
 			var reviewText = Console.ReadLine();
 			reviews.Add(new Review(reviewerId, GetTextScore(reviewTime, reviewText), reviewText));
 		}
@@ -41,7 +44,8 @@ internal class Solution
 		foreach (var review in orderedReviews)
 		{
 			var handledTokens = new HashSet<string>();
-			foreach (var textToken in review.Text.Split(' '))
+			var separator = new []{' ', ',' , '.' , '!', '?', ':', '/', '\\', '\t', '-', '=', '+'};
+			foreach (var textToken in review.Text.Split(separator, StringSplitOptions.RemoveEmptyEntries))
 			{
 				if (dic.ContainsKey(textToken) && !handledTokens.Contains(textToken))
 				{
