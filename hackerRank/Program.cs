@@ -1,28 +1,104 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Numerics;
 
 internal class Solution
 {
 	private static void Main(String[] args)
 	{
-		var input = Console.ReadLine().Split(' ').Select(Int32.Parse).ToArray();
-		BigInteger res = CalcWaysCount(input[0], input[1], input[2]);
-		Console.Out.WriteLine(res);
+		var x = Int32.Parse(Console.ReadLine());
+		for (int i = 0; i < x; i++)
+		{
+			var ratingsCount = Int32.Parse(Console.ReadLine());
+			bool res = AnalizeRatings(ratingsCount);
+			if (res)
+				Console.Out.WriteLine("ORDER EXISTS");
+			else
+				Console.Out.WriteLine("ORDER VIOLATION");
+		}
 	}
 
-	public static BigInteger CalcWaysCount(int n, int m, int c)
+	private static bool AnalizeRatings(int ratingsCount)
 	{
-		int uniqCities = (n - c) + (m - c) + c;
-		int mult = uniqCities - 1;
-		BigInteger result = mult;
-		mult--;
-		while (mult > 0)
+		var graph = new Dictionary<string, Node>();
+		for (int i = 0; i < ratingsCount; i++)
 		{
-			result *= mult;
-			mult--;
+			string[] attractions = Console.ReadLine().Split(',');
+			for (int j = 0; j < attractions.Length - 1; j++)
+			{
+				var curr = attractions[j];
+				var next = attractions[j + 1];
+				EnsureExistsInDic(graph, curr);
+				EnsureExistsInDic(graph, next);
+				AddChild(graph, curr, next);
+			}
 		}
-		return result;
+		List<Node> rootNodes = graph.Where(pair => !pair.Value.HasParent).Select(pair => pair.Value).ToList();
+		bool hasCycle = false;
+		foreach (var rootNode in rootNodes)
+		{
+			if (FindCycle(rootNode, graph))
+			{
+				hasCycle = true;
+				break;
+			}
+		}
+		if (graph.Count > 0)
+			return false;
+		return !hasCycle;
 	}
+
+	public static bool FindCycle(Node node, Dictionary<string, Node> graph)
+	{
+		graph.Remove(node.Key);
+
+		if (!node.IsWhite)
+			return true;
+		if (node.Children == null)
+			return false;
+		node.IsWhite = false;
+		foreach (var child in node.Children)
+		{
+			if (FindCycle(child, graph))
+				return true;
+		}
+		node.IsWhite = true;
+		return false;
+	}
+
+	private static void AddChild(Dictionary<string, Node> graph, string parentKey, string childKey)
+	{
+		var parent = graph[parentKey];
+		var child = graph[childKey];
+		child.HasParent = true;
+		parent.AddChild(child);
+	}
+
+	private static void EnsureExistsInDic(Dictionary<string, Node> graph, string key)
+	{
+		if (!graph.ContainsKey(key))
+			graph.Add(key, new Node(key));
+	}
+
 }
+
+	internal class Node
+	{
+		public Node(string key)
+		{
+			Key = key;
+		}
+
+		public string Key;
+		public HashSet<Node> Children;
+		public bool IsWhite = true;
+		public bool HasParent = false;
+
+		public void AddChild(Node child)
+		{
+			if (Children == null)
+				Children = new HashSet<Node>();
+			Children.Add(child);
+		}
+	}
