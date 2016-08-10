@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 internal class Solution
 {
 	private static void Main(String[] args)
 	{
-		var x = Int32.Parse(Console.ReadLine());
+		int x = Int32.Parse(Console.ReadLine());
 		for (int i = 0; i < x; i++)
 		{
-			var ratingsCount = Int32.Parse(Console.ReadLine());
+			int ratingsCount = Int32.Parse(Console.ReadLine());
 			bool res = AnalizeRatings(ratingsCount);
 			if (res)
 				Console.Out.WriteLine("ORDER EXISTS");
@@ -27,15 +26,15 @@ internal class Solution
 			string[] attractions = Console.ReadLine().Split(',');
 			for (int j = 0; j < attractions.Length - 1; j++)
 			{
-				var curr = attractions[j];
-				var next = attractions[j + 1];
+				string curr = attractions[j];
+				string next = attractions[j + 1];
 				EnsureExistsInDic(graph, curr);
 				EnsureExistsInDic(graph, next);
 				AddChild(graph, curr, next);
 			}
 		}
 		List<Node> rootNodes = graph.Where(pair => !pair.Value.HasParent).Select(pair => pair.Value).ToList();
-		foreach (var rootNode in rootNodes)
+		foreach (Node rootNode in rootNodes)
 		{
 			if (FindCycle(rootNode, graph))
 			{
@@ -56,7 +55,7 @@ internal class Solution
 		if (node.Children == null)
 			return false;
 		node.IsWhite = false;
-		foreach (var child in node.Children)
+		foreach (Node child in node.Children)
 		{
 			if (FindCycle(child, graph))
 				return true;
@@ -67,8 +66,8 @@ internal class Solution
 
 	private static void AddChild(Dictionary<string, Node> graph, string parentKey, string childKey)
 	{
-		var parent = graph[parentKey];
-		var child = graph[childKey];
+		Node parent = graph[parentKey];
+		Node child = graph[childKey];
 		child.HasParent = true;
 		parent.AddChild(child);
 	}
@@ -78,25 +77,24 @@ internal class Solution
 		if (!graph.ContainsKey(key))
 			graph.Add(key, new Node(key));
 	}
-
 }
 
-	internal class Node
+internal class Node
+{
+	public HashSet<Node> Children;
+	public bool HasParent = false;
+	public bool IsWhite = true;
+	public string Key;
+
+	public Node(string key)
 	{
-		public Node(string key)
-		{
-			Key = key;
-		}
-
-		public string Key;
-		public HashSet<Node> Children;
-		public bool IsWhite = true;
-		public bool HasParent = false;
-
-		public void AddChild(Node child)
-		{
-			if (Children == null)
-				Children = new HashSet<Node>();
-			Children.Add(child);
-		}
+		Key = key;
 	}
+
+	public void AddChild(Node child)
+	{
+		if (Children == null)
+			Children = new HashSet<Node>();
+		Children.Add(child);
+	}
+}
