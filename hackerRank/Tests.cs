@@ -8,7 +8,16 @@ namespace hackerRank
 	[TestFixture]
 	internal class Solution_Tests
 	{
-	
+
+		[TestCase(new []{5}, 5, 0)]
+		[TestCase(new []{1,2,3,4}, 1, 0)]
+		[TestCase(new []{1,2,3,4}, 4, 3)]
+		[TestCase(new []{1,2,3,4}, 2, 1)]
+		public void Test(int[] arr, int valueToSearch, int expectedIndex)
+		{
+			var index = Solution.BinSearch(arr, valueToSearch);
+			index.Should().Be(expectedIndex);
+		}
 
 	}
 }
