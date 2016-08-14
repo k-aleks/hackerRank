@@ -9,30 +9,11 @@ internal class Solution
 		int valueToSearch = Int32.Parse(Console.ReadLine());
 		int araySize = Int32.Parse(Console.ReadLine());
 		var arr = Console.ReadLine().Split(' ').Select(int.Parse).ToArray() ;
-		var res = BinSearch(arr, valueToSearch);
-		Console.Out.WriteLine(res);
+		InsertionSort(arr);
 
 	}
 
-	public static int BinSearch(int[] arr, int value)
+	public static void InsertionSort(int[] arr)
 	{
-		int left = 0;
-		int right = arr.Length;
-		int mid;
-		while (left <= right)
-		{
-			mid = (left + right)/2;
-			if (value < arr[mid])
-			{
-				right = mid - 1;
-			}
-			else if (value > arr[mid])
-			{
-				left = mid + 1;
-			}
-			else
-				return mid;
-		}
-		return -1;
 	}
 }
