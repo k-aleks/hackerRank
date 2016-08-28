@@ -14,7 +14,7 @@ namespace hackerRank
 		[TestCase(new[] {10, 9, 8, 7, 6, 5, 4, 3, 2, 1}, 45)]
 		public void Test(int[] arr, int expectedShifts)
 		{
-			int shifts = MergeSort.Sort(arr);
+			long shifts = MergeSort.Sort(arr);
 			arr.Should().BeInAscendingOrder();
 			shifts.Should().Be(expectedShifts);
 		}

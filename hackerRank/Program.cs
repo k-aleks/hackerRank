@@ -12,7 +12,7 @@ internal class Solution
 			int araySize = Int32.Parse(Console.ReadLine());
 			int[] arr = Console.ReadLine().Split(' ').Select(Int32.Parse).ToArray();
 
-			int shifts = MergeSort.Sort(arr);
+			long shifts = MergeSort.Sort(arr);
 			Console.Out.WriteLine(shifts);
 		}
 	}
@@ -25,14 +25,14 @@ internal class Solution
 
 public static class MergeSort
 {
-	public static int Sort(int[] arr)
+	public static long Sort(int[] arr)
 	{
-		int shifts = 0;
+		long shifts = 0;
 		Sort(arr, 0, arr.Length - 1, new int[arr.Length], ref shifts);
 		return shifts;
 	}
 
-	private static void Sort(int[] arr, int left, int right, int[] tmp, ref int shifts)
+	private static void Sort(int[] arr, int left, int right, int[] tmp, ref long shifts)
 	{
 		if (left >= right)
 			return;
@@ -43,7 +43,7 @@ public static class MergeSort
 		Merge(arr, left, mid, right, tmp, ref shifts);
 	}
 
-	private static void Merge(int[] arr, int left, int mid, int right, int[] tmp, ref int shifts)
+	private static void Merge(int[] arr, int left, int mid, int right, int[] tmp, ref long shifts)
 	{
 		Array.Copy(arr, left, tmp, left, right - left + 1);
 		int i = left;
