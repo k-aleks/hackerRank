@@ -5,20 +5,65 @@ internal class Solution
 {
 	private static void Main(String[] args)
 	{
-		int araySize = Int32.Parse(Console.ReadLine());
-		var arr = Console.ReadLine().Split(' ').Select(Int32.Parse).ToArray();
-	}
+		int experimentsCount = Int32.Parse(Console.ReadLine());
 
-	private static void Swap(int[] arr, int index1, int index2)
-	{
-		int tmp = arr[index1];
-		arr[index1] = arr[index2];
-		arr[index2] = tmp;
-	}
+		for (int i = 0; i < experimentsCount; i++)
+		{
+			int araySize = Int32.Parse(Console.ReadLine());
+			int[] arr = Console.ReadLine().Split(' ').Select(Int32.Parse).ToArray();
 
+			int shifts = MergeSort.Sort(arr);
+			Console.Out.WriteLine(shifts);
+		}
+	}
 
 	public static void Print<T>(T[] ar)
 	{
 		Console.Out.WriteLine(string.Join(" ", ar));
+	}
+}
+
+public static class MergeSort
+{
+	public static int Sort(int[] arr)
+	{
+		int shifts = 0;
+		Sort(arr, 0, arr.Length - 1, new int[arr.Length], ref shifts);
+		return shifts;
+	}
+
+	private static void Sort(int[] arr, int left, int right, int[] tmp, ref int shifts)
+	{
+		if (left >= right)
+			return;
+		int mid = (right + left)/2;
+		Sort(arr, left, mid, tmp, ref shifts);
+		Sort(arr, mid + 1, right, tmp, ref shifts);
+
+		Merge(arr, left, mid, right, tmp, ref shifts);
+	}
+
+	private static void Merge(int[] arr, int left, int mid, int right, int[] tmp, ref int shifts)
+	{
+		Array.Copy(arr, left, tmp, left, right - left + 1);
+		int i = left;
+		int j = mid + 1;
+		int iter = 0;
+		while (i <= mid && j <= right)
+		{
+			if (tmp[i] <= tmp[j])
+				arr[left + iter++] = tmp[i++];
+			else
+			{
+				arr[left + iter] = tmp[j];
+				shifts += j - (left + iter);
+				iter++;
+				j++;
+			}
+		}
+		if (i <= mid)
+		{
+			Array.Copy(tmp, i, arr, left + iter, mid - i + 1);
+		}
 	}
 }
