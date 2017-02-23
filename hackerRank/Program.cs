@@ -81,18 +81,12 @@ public class SortedList
 
         if (oldElementPosition < newElementPosition)
         {
-            for (int i = oldElementPosition; i < newElementPosition; i++)
-            {
-                arr[i] = arr[i+1];
-            }
+            Array.Copy(arr, oldElementPosition+1, arr, oldElementPosition, (newElementPosition-oldElementPosition));
             arr[newElementPosition] = newElement;
         }
         else
         {
-            for (int i = oldElementPosition; i > newElementPosition; i--)
-            {
-                arr[i] = arr[i-1];
-            }
+            Array.Copy(arr, newElementPosition, arr, newElementPosition+1, (oldElementPosition - newElementPosition));
             arr[newElementPosition] = newElement;
         }
     }
