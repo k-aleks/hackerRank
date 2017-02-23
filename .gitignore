@@ -10,7 +10,7 @@ obj/
 .nuget/
 packages/
 node_modules
-.idea
+.idea*
 Kanso.Monitoring/settings
 Kanso.Monitoring/logs
 Kanso.Monitoring/log.config.xml
