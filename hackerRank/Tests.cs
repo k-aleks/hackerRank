@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -17,13 +19,37 @@ namespace hackerRank
         public void CalculateAlarmsCount_ShouldCalculate_1()
         {
             int d = 5;
-            int[] arr = new int[]{2, 3, 4, 2, 3, 6, 8, 4, 5};
+            int[] arr = new int[] {2, 3, 4, 2, 3, 6, 8, 4, 5};
             var res = new AlarmSystem().CalculateAlarmsCount(arr, d);
 
             res.Should().Be(2);
 
         }
 
+        [Test]
+        public void TestWithBigData()
+        {
+            int[] expenditures;
+            int d;
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"../../../testData/fraudsystem/input");
+            using (var fileStream = new StreamReader(File.OpenRead(path)))
+            {
+                var firstLineArgs = fileStream.ReadLine().Split(' ');
+                int n = Int32.Parse(firstLineArgs[0]);
+                d = Int32.Parse(firstLineArgs[1]);
+
+                var secondLineArgs = fileStream.ReadLine().Split(' ');
+                expenditures = new int[secondLineArgs.Length];
+                for (int i = 0; i < expenditures.Length; i++)
+                {
+                    expenditures[i] = int.Parse(secondLineArgs[i]);
+                }
+            }
+
+            var res = new AlarmSystem().CalculateAlarmsCount(expenditures, d);
+
+            res.Should().Be(926);
+        }
     }
 
     [TestFixture]
