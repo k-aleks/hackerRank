@@ -1,98 +1,68 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace hackerRank
 {
-	[TestFixture]
-	internal class Solution_Tests
-	{
-
-	}
-
     [TestFixture]
-    public class AlarmSystem_Tests
+    internal class Solution_Tests
     {
         [Test]
-        public void CalculateAlarmsCount_ShouldCalculate_1()
+        public void Test()
         {
-            int d = 5;
-            int[] arr = new int[] {2, 3, 4, 2, 3, 6, 8, 4, 5};
-            var res = new AlarmSystem().CalculateAlarmsCount(arr, d);
-
-            res.Should().Be(2);
-
+            var n = new Node(3,
+                new Node(5, new Node(1, null, null), new Node(4, null, null)),
+                new Node(3, new Node(6, null, null), null));
+            preOrder(n);
         }
 
-        [Test]
-        public void TestWithBigData()
-        {
-            int[] expenditures;
-            int d;
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"../../../testData/fraudsystem/input");
-            using (var fileStream = new StreamReader(File.OpenRead(path)))
-            {
-                var firstLineArgs = fileStream.ReadLine().Split(' ');
-                int n = Int32.Parse(firstLineArgs[0]);
-                d = Int32.Parse(firstLineArgs[1]);
 
-                var secondLineArgs = fileStream.ReadLine().Split(' ');
-                expenditures = new int[secondLineArgs.Length];
-                for (int i = 0; i < expenditures.Length; i++)
+        public void preOrder(Node root)
+        {
+            LinkedList<Node> q = new LinkedList<Node>();
+            preOrder(root, q);
+        }
+
+        public void preOrder(Node n, LinkedList<Node> q)
+        {
+            Console.Out.Write(n.data + " ");
+            q.AddLast(n);
+            if (n.left != null)
+                preOrder(n.left, q);
+            else
+            {
+                Node fromQ;
+                do
                 {
-                    expenditures[i] = int.Parse(secondLineArgs[i]);
-                }
+                    if (q.Count == 0)
+                        return;
+
+                    fromQ = q.Last();
+                    q.RemoveLast();
+                } while (fromQ.right == null);
+                preOrder(fromQ.right);
             }
 
-            var res = new AlarmSystem().CalculateAlarmsCount(expenditures, d);
-
-            res.Should().Be(926);
         }
-    }
 
-    [TestFixture]
-    public class SortedList_Tests
-    {
-        [Test]
-        public void Replace_ShouldCreateSortedList_1()
+        internal class Node
         {
-            var list = new SortedList(new int[]{4,3,2,1});
-            list.Replace(3, 5);
+            public Node(int data, Node left, Node right)
+            {
+                this.data = data;
+                this.left = left;
+                this.right = right;
+            }
 
-            list.Arr.Should().Equal(1, 2, 4, 5);
-        }
-
-        [Test]
-        public void Replace_ShouldCreateSortedList_2()
-        {
-            var list = new SortedList(new int[]{4,3,2,1});
-            list.Replace(4, 5);
-
-            list.Arr.Should().Equal(1, 2, 3, 5);
+            public int data;
+            public Node left;
+            public Node right;
         }
 
 
-        [Test]
-        public void Replace_ShouldCreateSortedList_3()
-        {
-            var list = new SortedList(new int[]{4,3,2,2});
-            list.Replace(2, 1);
-
-            list.Arr.Should().Equal(1, 2, 3, 4);
-        }
-
-        [TestCase(new int[]{1}, 1)]
-        [TestCase(new int[]{1,2,3}, 2)]
-        [TestCase(new int[]{1,2,3,4}, 2.5)]
-        [TestCase(new int[]{2,2,2,2}, 2)]
-        public void GetMedian_ShouldReturnMedian(int[] arr, double expectedMedian)
-        {
-            var list = new SortedList(arr);
-            var res = list.GetMedian();
-
-            res.Should().Be(expectedMedian);
-        }
     }
 }
