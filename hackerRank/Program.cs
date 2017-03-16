@@ -1,136 +1,169 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using NUnit.Framework;
 
+/// <summary>
+/// Plan:
+/// 1) Rotator with height recalculation
+/// </summary>
 internal class Solution
 {
 	private static void Main(String[] args)
 	{
-	    var firstLineArgs = Console.ReadLine().Split(' ');
-	    int n = Int32.Parse(firstLineArgs[0]);
-	    int d = Int32.Parse(firstLineArgs[1]);
-
-	    var secondLineArgs = Console.ReadLine().Split(' ');
-        int[] expenditures = new int[secondLineArgs.Length];
-		for (int i = 0; i < expenditures.Length; i++)
-		{
-		    expenditures[i] = int.Parse(secondLineArgs[i]);
-		}
-
-	    var result = new AlarmSystem().CalculateAlarmsCount(expenditures, d);
-	    Console.Out.WriteLine(result);
 	}
+
+    public static Node InsertNode(Node treeRoot, int value)
+    {
+        var newNode = new Node()
+        {
+            val = value,
+            ht = 1
+        };
+
+        if (treeRoot == null)
+        {
+            treeRoot = newNode;
+            return treeRoot;
+        }
+
+        List<Node> path = new List<Node>();
+        FindParent(treeRoot, value, path);
+
+        Node parent = path.Last();
+
+        if (value < parent.val)
+        {
+            parent.left = newNode;
+        }
+        else if (value > parent.val)
+        {
+            parent.right = newNode;
+        }
+        else
+        {
+            throw new Exception("Unexpected error");
+        }
+
+        if (!RecalculateHeight(path))
+            return treeRoot;
+
+        RebalanceIfNeeded(path, newNode);
+
+        return treeRoot;
+    }
+
+    private static bool RecalculateHeight(List<Node> path)
+    {
+        if (path.Last().ht == 1)
+            return false; //parent had one child and height didn't change
+        foreach (var node in path)
+        {
+            node.ht++;
+        }
+        return true;
+    }
+
+    private static Node RebalanceIfNeeded(List<Node> path, Node newNode)
+    {
+        Node root = path[0];
+        Node node;
+        for (int i = path.Count - 1; i >= 0; i--)
+        {
+            node = path[i];
+            int balanceFactor = GetBalanceFactor(node);
+
+            if (balanceFactor == 2)
+            {
+
+                return root;
+            }
+
+            if (balanceFactor == -2)
+            {
+                Node newSubtreeRoot;
+                Node rightNode = node.right;
+
+                if (GetBalanceFactor(rightNode) > 0)
+                {
+                    newSubtreeRoot = Rotator.PerformLeftRightRotation(node, rightNode);
+                    TreeHeightCalculator.CalcHeighForEachNode(newSubtreeRoot);
+                }
+                else
+                {
+                    newSubtreeRoot = Rotator.PerformLeftRotation(node);
+                    TreeHeightCalculator.CalcHeighForEachNode(newSubtreeRoot);
+                }
+
+                if (i == 0)
+                    root = newSubtreeRoot;
+                else
+                {
+                    path[i - 1].right = newSubtreeRoot;
+                    RecalculateHeightUpToTheRoot(path, i - 1, newSubtreeRoot.ht + 1);
+                }
+
+                return root;
+            }
+
+            if (balanceFactor > 2 || balanceFactor < -2)
+            {
+                throw new Exception($"Unexpected balanceFactor {balanceFactor}");
+            }
+        }
+
+        return root;
+    }
+
+    private static void RecalculateHeightUpToTheRoot(List<Node> path, int startingIndex, int minHeight)
+    {
+        for (int j = startingIndex, i = 0; j >= 0; j--, i++)
+        {
+            path[j].ht = minHeight + i;
+        }
+    }
+
+
+    private static int GetBalanceFactor(Node node)
+    {
+        return GetNodeHight(node.left) - GetNodeHight(node.right);
+    }
+
+    private static void FindParent(Node node, int value, List<Node> path)
+    {
+        path.Add(node);
+        if (value < node.val)
+        {
+            if (node.left == null)
+                return ;
+            FindParent(node.left, value, path);
+        }
+        else if (value > node.val)
+        {
+            if (node.right == null)
+                return;
+            FindParent(node.right, value, path);
+        }
+        else
+            throw new Exception("Unexpected error");
+    }
+
+    private static int GetNodeHight(Node node)
+    {
+        if (node == null)
+            return 0;
+        return node.ht;
+    }
 }
 
-public class AlarmSystem
+
+class Node
 {
-    public int CalculateAlarmsCount(int[] expenditures, int analysisPeriod)
-    {
-        if (analysisPeriod >= expenditures.Length)
-            return 0;
-
-        var sortedList = CreateSortedList(expenditures, analysisPeriod);
-
-        int alarmsCount = 0;
-        for (int i = analysisPeriod; i < expenditures.Length; i++)
-        {
-            if (expenditures[i] >= sortedList.GetMedian() * 2)
-                alarmsCount++;
-
-            var valueToAdd = expenditures[i];
-            var valueToRemove = expenditures[i - analysisPeriod];
-            sortedList.Replace(valueToRemove, valueToAdd);
-        }
-
-        return alarmsCount;
-    }
-
-    private SortedList CreateSortedList(int[] expenditures, int analysisPeriod)
-    {
-        var initialExpenditures = new int[analysisPeriod];
-        Array.Copy(expenditures, 0, initialExpenditures, 0, analysisPeriod);
-        return new SortedList(initialExpenditures);
-    }
-}
-
-public class SortedList
-{
-    int[] arr;
-    bool isEven;
-
-    public SortedList(int[] initialArray)
-    {
-        arr = initialArray;
-        Array.Sort(arr);
-        isEven = arr.Length % 2 == 0;
-    }
-
-    public void Replace(int oldElement, int newElement)
-    {
-        if (oldElement == newElement)
-            return;
-
-        int oldElementPosition = BinSearchPosition(oldElement);
-        int newElementPosition = BinSearchPosition(newElement);
-
-        if (oldElementPosition == newElementPosition)
-        {
-            arr[newElementPosition] = newElement;
-            return;
-        }
-
-        if (oldElementPosition < newElementPosition)
-        {
-            Array.Copy(arr, oldElementPosition+1, arr, oldElementPosition, (newElementPosition-oldElementPosition));
-            arr[newElementPosition] = newElement;
-        }
-        else
-        {
-            Array.Copy(arr, newElementPosition, arr, newElementPosition+1, (oldElementPosition - newElementPosition));
-            arr[newElementPosition] = newElement;
-        }
-    }
-
-    public double GetMedian()
-    {
-        if (isEven)
-        {
-            var i = arr.Length / 2;
-            return (arr[i-1] + arr[i]) / 2d;
-        }
-        else
-        {
-            if (arr.Length == 1)
-                return arr[0];
-            return arr[arr.Length / 2];
-        }
-    }
-
-    public int[] Arr
-    {
-        get { return arr; }
-    }
-
-    private int BinSearchPosition(int element)
-    {
-        if (element <= arr[0])
-            return 0;
-        if (element >= arr[arr.Length-1])
-            return arr.Length - 1;
-
-        return BinSearchPosition(element, arr, 0, arr.Length-1);
-    }
-
-    private int BinSearchPosition(int element, int[] arr, int from, int to)
-    {
-        if (from == to)
-            return to;
-
-        var mid = from + (to - from + 1) / 2;
-
-        if (element < arr[mid])
-            return BinSearchPosition(element, arr, from, mid-1);
-        else
-            return BinSearchPosition(element, arr, mid, to);
-    }
+    public int val;   //Value
+    public int ht = -1;      //Height
+    public Node left;   //Left child
+    public Node right;   //Right child
 }
