@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,38 +8,38 @@ internal class Solution
 {
 	private static void Main(String[] args)
 	{
-	    int count = Int32.Parse(Console.ReadLine());
-	    List<string> ops = new List<string>();
-	    for (int i = 0; i < count; i++)
-	    {
-	        ops.Add(Console.ReadLine());
-	    }
-//	    var ops = File.ReadAllLines("../../../testData/minHeap/input.txt").Skip(1).ToList();
+	    int k = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).Skip(1).First();
+	    var cookies = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).ToArray();
 	    var heap = new MinHeap();
-	    foreach (var op in ops)
+	    foreach (var cookie in cookies)
 	    {
-	        var opParams = op.Split(' ').Select(s => int.Parse(s)).ToArray();
-	        switch (opParams[0])
-	        {
-	            case 1:
-	                heap.Add(opParams[1]);
-	                break;
-	            case 2:
-	                heap.Delete(opParams[1]);
-	                break;
-	            case 3:
-	                var min = heap.GetMin();
-	                Console.Out.WriteLine(min);
-	                break;
-	        }
+	        heap.Add(cookie);
 	    }
+	    int operationsCount = 0;
+	    if (heap.GetMin() >= k)
+	    {
+	        Console.Out.WriteLine(operationsCount);
+	        return;
+	    }
+	    while (heap.Count > 1)
+	    {
+	        operationsCount++;
+	        int mixedCookie = heap.PopMin() + 2 * heap.PopMin();
+	        heap.Add(mixedCookie);
+            if (heap.GetMin() >= k)
+            {
+                Console.Out.WriteLine(operationsCount);
+                return;
+            }
+	    }
+	    Console.Out.WriteLine(-1);
 	}
 }
 
 public class MinHeap
 {
-    BinaryTreeIndexer indexer = new BinaryTreeIndexer();
-    List<int> list = new List<int>();
+    readonly BinaryTreeIndexer indexer = new BinaryTreeIndexer();
+    readonly List<int> list = new List<int>();
 
     public void Add(int newElement)
     {
@@ -48,17 +49,30 @@ public class MinHeap
 
     public void Delete(int element)
     {
-        var elementIndex = list.IndexOf(element);
-        list[elementIndex] = list[list.Count - 1];
-        list.RemoveAt(list.Count - 1);
-        if (elementIndex == list.Count)
-            return;
-        DownHeapElement(elementIndex);
+        DeleteAtIndex(list.IndexOf(element));
+    }
+
+    public int PopMin()
+    {
+        int min = list[0];
+        DeleteAtIndex(0);
+        return min;
     }
 
     public int GetMin()
     {
         return list[0];
+    }
+
+    public int Count => list.Count;
+
+    private void DeleteAtIndex(int elementIndex)
+    {
+        list[elementIndex] = list[list.Count - 1];
+        list.RemoveAt(list.Count - 1);
+        if (elementIndex == list.Count)
+            return;
+        DownHeapElement(elementIndex);
     }
 
     private void DownHeapElement(int elementIndex)
