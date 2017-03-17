@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 internal class Solution
@@ -7,12 +8,36 @@ internal class Solution
 	private static void Main(String[] args)
 	{
 	    int count = Int32.Parse(Console.ReadLine());
-
+	    List<string> ops = new List<string>();
+	    for (int i = 0; i < count; i++)
+	    {
+	        ops.Add(Console.ReadLine());
+	    }
+//	    var ops = File.ReadAllLines("../../../testData/minHeap/input.txt").Skip(1).ToList();
+	    var heap = new MinHeap();
+	    foreach (var op in ops)
+	    {
+	        var opParams = op.Split(' ').Select(s => int.Parse(s)).ToArray();
+	        switch (opParams[0])
+	        {
+	            case 1:
+	                heap.Add(opParams[1]);
+	                break;
+	            case 2:
+	                heap.Delete(opParams[1]);
+	                break;
+	            case 3:
+	                var min = heap.GetMin();
+	                Console.Out.WriteLine(min);
+	                break;
+	        }
+	    }
 	}
 }
 
-public class BinaryHeap
+public class MinHeap
 {
+    BinaryTreeIndexer indexer = new BinaryTreeIndexer();
     List<int> list = new List<int>();
 
     public void Add(int newElement)
@@ -21,9 +46,56 @@ public class BinaryHeap
         UpHeapLastElement();
     }
 
+    public void Delete(int element)
+    {
+        var elementIndex = list.IndexOf(element);
+        list[elementIndex] = list[list.Count - 1];
+        list.RemoveAt(list.Count - 1);
+        if (elementIndex == list.Count)
+            return;
+        DownHeapElement(elementIndex);
+    }
+
+    public int GetMin()
+    {
+        return list[0];
+    }
+
+    private void DownHeapElement(int elementIndex)
+    {
+        while (true)
+        {
+            int leftIndex = indexer.GetLeftChildIndex(elementIndex);
+            int rightIndex = indexer.GetRightChildIndex(elementIndex);
+
+            int leftChild = (leftIndex >= list.Count) ? int.MaxValue : list[leftIndex];
+            int rightChild = (rightIndex >= list.Count) ? int.MaxValue : list[rightIndex];
+
+            if (list[elementIndex] <= Math.Min(leftChild, rightChild))
+                return;
+
+            int minIndex = (leftChild < rightChild) ? leftIndex : rightIndex;
+
+            int element = list[elementIndex];
+            list[elementIndex] = list[minIndex];
+            list[minIndex] = element;
+            elementIndex = minIndex;
+        }
+    }
+
     private void UpHeapLastElement()
     {
-        throw new NotImplementedException();
+        int elementIndex = list.Count - 1;
+        while (elementIndex > 0)
+        {
+            int parentIndex = indexer.GetParentIndex(elementIndex);
+            if (list[parentIndex] <= list[elementIndex])
+                return;
+            int tmp = list[parentIndex];
+            list[parentIndex] = list[elementIndex];
+            list[elementIndex] = tmp;
+            elementIndex = parentIndex;
+        }
     }
 }
 
@@ -33,7 +105,6 @@ public class BinaryTreeIndexer
     {
         int bucketNumber = GetBucketNumber(childIndex);
         int indexInBucket = GetIndexInBucket(childIndex, bucketNumber);
-        int parentBucketSize = GetBucketSize(bucketNumber - 1);
         int indexInBucketOfParent = (int) indexInBucket / 2;
         return GetBucketStartIndex(bucketNumber - 1) + indexInBucketOfParent;
     }
