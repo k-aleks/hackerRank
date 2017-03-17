@@ -8,9 +8,15 @@ internal class Solution
 {
 	private static void Main(String[] args)
 	{
-	    int k = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).Skip(1).First();
-	    var cookies = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).ToArray();
-	    var heap = new MinHeap();
+//	    int k = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).Skip(1).First();
+//	    var cookies = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).ToArray();
+	    int k = 105823341;//(int)Math.Pow(10, 9);
+	    var cookies = new int[(int)Math.Pow(10, 6)];
+	    for (int i = 0; i < cookies.Length; i++)
+	    {
+	        cookies[i] = 10000;
+	    }
+	    var heap = new MinHeap(cookies.Length);
 	    foreach (var cookie in cookies)
 	    {
 	        heap.Add(cookie);
@@ -39,7 +45,13 @@ internal class Solution
 public class MinHeap
 {
     readonly BinaryTreeIndexer indexer = new BinaryTreeIndexer();
-    readonly List<int> list = new List<int>();
+    private readonly List<int> list;
+
+    public MinHeap(int initialCapacity = 16)
+    {
+        list = new List<int>(initialCapacity);
+    }
+
 
     public void Add(int newElement)
     {
