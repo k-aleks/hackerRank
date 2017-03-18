@@ -1,45 +1,48 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics;
 using System.Linq;
 
 internal class Solution
 {
-	private static void Main(String[] args)
-	{
-//	    int k = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).Skip(1).First();
-//	    var cookies = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).ToArray();
-	    int k = 105823341;//(int)Math.Pow(10, 9);
-	    var cookies = new int[(int)Math.Pow(10, 6)];
-	    for (int i = 0; i < cookies.Length; i++)
-	    {
-	        cookies[i] = 10000;
-	    }
-	    var heap = new MinHeap(cookies.Length);
-	    foreach (var cookie in cookies)
-	    {
-	        heap.Add(cookie);
-	    }
-	    int operationsCount = 0;
-	    if (heap.GetMin() >= k)
-	    {
-	        Console.Out.WriteLine(operationsCount);
-	        return;
-	    }
-	    while (heap.Count > 1)
-	    {
-	        operationsCount++;
-	        int mixedCookie = heap.PopMin() + 2 * heap.PopMin();
-	        heap.Add(mixedCookie);
+    private static void Main(String[] args)
+    {
+        int k = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).Skip(1).First();
+        var cookies = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).ToArray();
+//            var sw = Stopwatch.StartNew();
+//	    int k = 105823341;//(int)Math.Pow(10, 9);
+//	    var cookies = new int[(int)Math.Pow(10, 6)];
+//	    for (int i = 0; i < cookies.Length; i++)
+//	    {
+//	        cookies[i] = 10000;
+//	    }
+        var heap = new MinHeap(cookies.Length);
+        foreach (var cookie in cookies)
+        {
+            heap.Add(cookie);
+        }
+        int operationsCount = 0;
+        if (heap.GetMin() >= k)
+        {
+            Console.Out.WriteLine(operationsCount);
+            return;
+        }
+        while (heap.Count > 1)
+        {
+            operationsCount++;
+            int mixedCookie = heap.PopMin() + 2*heap.PopMin();
+            heap.Add(mixedCookie);
             if (heap.GetMin() >= k)
             {
                 Console.Out.WriteLine(operationsCount);
+//                    Console.Out.WriteLine(sw.Elapsed);
+//                    Console.ReadLine();
                 return;
             }
-	    }
-	    Console.Out.WriteLine(-1);
-	}
+        }
+        Console.Out.WriteLine(-1);
+    }
+
 }
 
 public class MinHeap
@@ -92,7 +95,7 @@ public class MinHeap
         while (true)
         {
             int leftIndex = indexer.GetLeftChildIndex(elementIndex);
-            int rightIndex = indexer.GetRightChildIndex(elementIndex);
+            int rightIndex = leftIndex + 1;
 
             int leftChild = (leftIndex >= list.Count) ? int.MaxValue : list[leftIndex];
             int rightChild = (rightIndex >= list.Count) ? int.MaxValue : list[rightIndex];
@@ -131,7 +134,7 @@ public class BinaryTreeIndexer
     {
         int bucketNumber = GetBucketNumber(childIndex);
         int indexInBucket = GetIndexInBucket(childIndex, bucketNumber);
-        int indexInBucketOfParent = (int) indexInBucket / 2;
+        int indexInBucketOfParent = (int) indexInBucket/2;
         return GetBucketStartIndex(bucketNumber - 1) + indexInBucketOfParent;
     }
 
@@ -139,7 +142,7 @@ public class BinaryTreeIndexer
     {
         int bucketNumber = GetBucketNumber(parentIndex);
         int indexInBucket = GetIndexInBucket(parentIndex, bucketNumber);
-        return GetBucketStartIndex(bucketNumber + 1) + 2 * (indexInBucket);
+        return GetBucketStartIndex(bucketNumber + 1) + 2*(indexInBucket);
     }
 
     public int GetRightChildIndex(int parentIndex)
@@ -149,7 +152,7 @@ public class BinaryTreeIndexer
 
     public int GetBucketNumber(int index)
     {
-        return (int)Math.Log(index + 1) + 1;
+        return (int) Math.Log(index + 1) + 1;
     }
 
     public int GetIndexInBucket(int index, int bucketNumber)
@@ -159,13 +162,24 @@ public class BinaryTreeIndexer
 
     public int GetBucketStartIndex(int bucketNumber)
     {
-
-        return (int)Math.Pow(2, bucketNumber) - 1;
+        return PowOfTwo(bucketNumber) - 1;
     }
 
     public int GetBucketSize(int bucketNumber)
     {
-        return (int) Math.Pow(2, bucketNumber);
+        return PowOfTwo(bucketNumber);
+    }
+
+    private int PowOfTwo(int pow)
+    {
+        if (pow == 0)
+            return 1;
+        int res = 2;
+        for (int i = 0; i < pow - 1; i++)
+        {
+            res *= 2;
+        }
+        return res;
     }
 }
 
