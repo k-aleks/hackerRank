@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 internal class Solution
@@ -9,13 +8,6 @@ internal class Solution
     {
         int k = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).Skip(1).First();
         var cookies = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).ToArray();
-//            var sw = Stopwatch.StartNew();
-//	    int k = 105823341;//(int)Math.Pow(10, 9);
-//	    var cookies = new int[(int)Math.Pow(10, 6)];
-//	    for (int i = 0; i < cookies.Length; i++)
-//	    {
-//	        cookies[i] = 10000;
-//	    }
         var heap = new MinHeap(cookies.Length);
         foreach (var cookie in cookies)
         {
@@ -35,8 +27,6 @@ internal class Solution
             if (heap.GetMin() >= k)
             {
                 Console.Out.WriteLine(operationsCount);
-//                    Console.Out.WriteLine(sw.Elapsed);
-//                    Console.ReadLine();
                 return;
             }
         }
@@ -152,12 +142,14 @@ public class BinaryTreeIndexer
 
     public int GetBucketNumber(int index)
     {
+        return LogTwo(index + 1);
         return (int) Math.Log(index + 1) + 1;
     }
 
     public int GetIndexInBucket(int index, int bucketNumber)
     {
-        return index - GetBucketStartIndex(bucketNumber);
+        int bucketStartIndex = GetBucketStartIndex(bucketNumber);
+        return index - bucketStartIndex;
     }
 
     public int GetBucketStartIndex(int bucketNumber)
@@ -180,6 +172,20 @@ public class BinaryTreeIndexer
             res *= 2;
         }
         return res;
+    }
+
+    public int LogTwo(int i)
+    {
+        if (i <= 1)
+            return 0;
+        int pow = 1;
+        int cur = 2;
+        while (cur <= i)
+        {
+            cur *= 2;
+            pow++;
+        }
+        return pow - 1;
     }
 }
 
