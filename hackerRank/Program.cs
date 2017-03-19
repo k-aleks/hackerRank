@@ -6,8 +6,6 @@ internal class Solution
 {
     private static void Main(String[] args)
     {
-        List<ulong> results = new List<ulong>();
-
         int queriesCount = int.Parse(Console.ReadLine());
 
         for (int i = 0; i < queriesCount; i++)
@@ -26,59 +24,51 @@ internal class Solution
                 cities[road[0]].Connected.Add(road[1]);
                 cities[road[1]].Connected.Add(road[0]);
             }
-            int libCost = p[2];
-            int roadCost = p[3];
-            ulong res = BuildLibraries(cities, libCost, roadCost);
-            results.Add(res);
+            int startNode = int.Parse(Console.ReadLine());
+            var res = FindShortestWayToAllNodes(cities, startNode);
+            Console.Out.WriteLine(string.Join(" ", res.Where(d => d!= 0)));
         }
 
-        foreach (var result in results)
-        {
-            Console.Out.WriteLine(result);
-        }
     }
 
-    public static ulong BuildLibraries(Dictionary<int, Node> allNodes, int libCost, int roadCost)
+    public static int[] FindShortestWayToAllNodes(Dictionary<int, Node> allNodes, int startNode)
     {
-        if (roadCost >= libCost)
-            return (ulong)allNodes.Count * (ulong) libCost;
+        int nodesCount = allNodes.Count;
 
-        int citiesCount = allNodes.Count;
-
-        ulong totalCost = 0;
-        for (var cityId = 1; cityId <= citiesCount; cityId++)
+        var res = new int[nodesCount];
+        for (int i = 0; i < nodesCount; i++)
         {
-            Node firstNode;
-            if (!allNodes.TryGetValue(cityId, out firstNode))
-                continue;
-            totalCost += (ulong) libCost;
-            var buffer = new List<Node>()
-            {
-                firstNode
-            };
-            allNodes.Remove(firstNode.Id);
-            while (buffer.Count > 0)
-            {
-                var newBuffer = new List<Node>();
-                foreach (var node in buffer)
-                {
-                    foreach (var connectedNodeId in node.Connected)
-                    {
-                        if (!allNodes.ContainsKey(connectedNodeId)) //already visited
-                            continue;
-                        totalCost += (ulong) roadCost;
-                        newBuffer.Add(allNodes[connectedNodeId]);
-                        allNodes.Remove(connectedNodeId);
-                    }
-                }
-                buffer = newBuffer;
-            }
+            res[i] = -1;
         }
-        return totalCost;
+        res[startNode-1] = 0;
+
+        var visited = new HashSet<int>();
+        var currentLevel = new List<int>() {startNode};
+        visited.Add(startNode);
+        int level = 1;
+
+        while (currentLevel.Count > 0)
+        {
+            var nextLevel = new List<int>();
+            foreach (var id in currentLevel)
+            {
+                foreach (var nextLevelNode in allNodes[id].Connected)
+                {
+                    if (visited.Contains(nextLevelNode))
+                        continue;
+                    visited.Add(nextLevelNode);
+                    nextLevel.Add(nextLevelNode);
+                    res[nextLevelNode-1] = level * 6;
+                }
+            }
+            currentLevel = nextLevel;
+            level++;
+        }
+        return res;
     }
 }
 
-public class Node : IEquatable<Node>
+public class Node
 {
     public int Id;
     public HashSet<int> Connected;
@@ -86,36 +76,6 @@ public class Node : IEquatable<Node>
     public Node(int id)
     {
         Id = id;
-    }
-
-    public bool Equals(Node other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return Id == other.Id;
-    }
-
-    public override bool Equals(object obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
-        return Equals((Node) obj);
-    }
-
-    public override int GetHashCode()
-    {
-        return Id;
-    }
-
-    public static bool operator ==(Node left, Node right)
-    {
-        return Equals(left, right);
-    }
-
-    public static bool operator !=(Node left, Node right)
-    {
-        return !Equals(left, right);
     }
 }
 
