@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class MinHeap
+public class MinHeap : IMinHeap
 {
     readonly BinaryTreeIndexer indexer = new BinaryTreeIndexer();
     private readonly List<int> list;
