@@ -51,6 +51,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataStructures\BinaryTreeIndexer.cs" />
+    <Compile Include="DataStructures\BinaryTreeIndexer_Tests.cs" />
     <Compile Include="DataStructures\MinHeap.cs" />
     <Compile Include="DataStructures\MinHeap_Tests.cs" />
     <Compile Include="Program.cs" />
