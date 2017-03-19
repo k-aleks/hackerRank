@@ -1,36 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 internal class Solution
 {
     private static void Main(String[] args)
     {
-        int queriesCount = int.Parse(Console.ReadLine());
+        List<ulong> results = new List<ulong>();
 
-        List<int> results = new List<int>();
+//        using (FileStream fs = File.OpenRead(@"../../../testData/roadsAndLibs/inbox.txt"))
+//        {
+            Console.SetIn(new StreamReader(fs));
+            int queriesCount = int.Parse(Console.ReadLine());
 
-        for (int i = 0; i < queriesCount; i++)
-        {
-            int[] p = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).ToArray();
-            int citiesCount = p[0];
-            var cities = new Dictionary<int, Node>();
-            for (int j = 1; j <= citiesCount; j++)
+
+            for (int i = 0; i < queriesCount; i++)
             {
-                cities.Add(j, new Node(j) {Connected = new HashSet<int>()});
+                int[] p = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).ToArray();
+                int citiesCount = p[0];
+                var cities = new Dictionary<int, Node>();
+                for (int j = 1; j <= citiesCount; j++)
+                {
+                    cities.Add(j, new Node(j) {Connected = new HashSet<int>()});
+                }
+                int roadsCount = p[1];
+                for (int j = 0; j < roadsCount; j++)
+                {
+                    int[] road = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).ToArray();
+                    cities[road[0]].Connected.Add(road[1]);
+                    cities[road[1]].Connected.Add(road[0]);
+                }
+                int libCost = p[2];
+                int roadCost = p[3];
+                ulong res = BuildLibraries(cities, libCost, roadCost);
+                results.Add(res);
             }
-            int roadsCount = p[1];
-            for (int j = 0; j < roadsCount; j++)
-            {
-                int[] road = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).ToArray();
-                cities[road[0]].Connected.Add(road[1]);
-                cities[road[1]].Connected.Add(road[0]);
-            }
-            int libCost = p[2];
-            int roadCost = p[3];
-            int res = BuildLibraries(cities, libCost, roadCost);
-            results.Add(res);
-        }
+//        }
 
         foreach (var result in results)
         {
@@ -38,16 +44,16 @@ internal class Solution
         }
     }
 
-    public static int BuildLibraries(Dictionary<int, Node> allNodes, int libCost, int roadCost)
+    public static ulong BuildLibraries(Dictionary<int, Node> allNodes, int libCost, int roadCost)
     {
         if (roadCost >= libCost)
-            return allNodes.Count * libCost;
+            return (ulong)allNodes.Count * (ulong) libCost;
 
-        int totalCost = 0;
+        ulong totalCost = 0;
         while (allNodes.Count > 0)
         {
             Node firstNode = allNodes.First().Value;
-            totalCost += libCost;
+            totalCost += (ulong) libCost;
             var buffer = new List<Node>()
             {
                 firstNode
@@ -62,7 +68,7 @@ internal class Solution
                     {
                         if (!allNodes.ContainsKey(connectedNodeId)) //already visited
                             continue;
-                        totalCost += roadCost;
+                        totalCost += (ulong) roadCost;
                         newBuffer.Add(allNodes[connectedNodeId]);
                         allNodes.Remove(connectedNodeId);
                     }
