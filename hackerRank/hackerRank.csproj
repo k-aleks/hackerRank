@@ -56,6 +56,8 @@
     <Compile Include="DataStructures\IMinHeap.cs" />
     <Compile Include="DataStructures\MinHeap.cs" />
     <Compile Include="DataStructures\IMinHeap_Tests.cs" />
+    <Compile Include="DataStructures\MinHeapForUniqElements.cs" />
+    <Compile Include="DataStructures\MinHeapForUniqElements_Tests.cs" />
     <Compile Include="DataStructures\MinHeap_Tests.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
