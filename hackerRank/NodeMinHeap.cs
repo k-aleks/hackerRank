@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class NodeMinHeap
+public class NodeMinHeap_bak
 {
     readonly BinaryTreeIndexer indexer = new BinaryTreeIndexer();
     private readonly List<Node> list;
     private readonly Dictionary<Node, int> mapValueToIndex;
 
-    public NodeMinHeap(int initialCapacity = 16)
+    public NodeMinHeap_bak(int initialCapacity = 16)
     {
         list = new List<Node>(initialCapacity);
         mapValueToIndex = new Dictionary<Node, int>(initialCapacity);

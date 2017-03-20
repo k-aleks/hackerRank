@@ -1,4 +1,4 @@
-﻿public class BinaryTreeIndexer
+﻿public class BinaryTreeIndexer_bak
 {
     public int GetParentIndex(int childIndex)
     {
