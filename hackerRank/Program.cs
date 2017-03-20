@@ -7,17 +7,13 @@ internal class Solution
 {
     private static void Main(String[] args)
     {
-        using (var fs = File.OpenRead("../../../testData/dijkstra/input07"))
-        {
-            Console.SetIn(new StreamReader(fs));
-
-            InternalMain();
-        }
+        InternalMain();
     }
 
     private static void InternalMain()
     {
         int queriesCount = int.Parse(Console.ReadLine());
+        var intReader = new IntReader();
 
         for (int i = 0; i < queriesCount; i++)
         {
@@ -31,10 +27,11 @@ internal class Solution
             int roadsCount = p[1];
             for (int j = 0; j < roadsCount; j++)
             {
-                int[] road = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).ToArray();
-                int city1 = road[0];
-                int city2 = road[1];
-                int roadCost = road[2];
+                var line = Console.ReadLine();
+                intReader.StartNew(line);
+                int city1 = intReader.ReadNext();
+                int city2 = intReader.ReadNext();
+                int roadCost = intReader.ReadNext();
                 cities[city1].Connected.Add(new Road(city2, roadCost));
                 cities[city2].Connected.Add(new Road(city1, roadCost));
             }
@@ -143,7 +140,7 @@ public class Node : IEquatable<Node>
     public static Comparer<Node> DistComparer { get; } = new DistRelationalComparer();
 }
 
-public class Road
+public struct Road
 {
     public Road(int destination, int cost)
     {
@@ -329,3 +326,44 @@ public class BinaryTreeIndexer
         return pow - 1;
     }
 }
+
+
+public class IntReader
+{
+    private static Dictionary<char, int> dic = new Dictionary<char, int>()
+    {
+        {'0', 0},
+        {'1', 1},
+        {'2', 2},
+        {'3', 3},
+        {'4', 4},
+        {'5', 5},
+        {'6', 6},
+        {'7', 7},
+        {'8', 8},
+        {'9', 9},
+    };
+    private string str;
+    private int position;
+
+    public void StartNew(string str)
+    {
+        this.str = str;
+        position = 0;
+    }
+
+    public int ReadNext()
+    {
+        int current = dic[str[position]];
+        position++;
+        while (position < str.Length && str[position] != ' ' )
+        {
+            current *= 10;
+            current += dic[str[position]];
+            position++;
+        }
+        position++;
+        return current;
+    }
+}
+
