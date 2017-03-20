@@ -7,12 +7,12 @@ internal class Solution
 {
     private static void Main(String[] args)
     {
-//        using (var fs = File.OpenRead("../../../testData/dijkstra/input.txt"))
-//        {
-//            Console.SetIn(new StreamReader(fs));
+        using (var fs = File.OpenRead("../../../testData/dijkstra/input07"))
+        {
+            Console.SetIn(new StreamReader(fs));
 
             InternalMain();
-//        }
+        }
     }
 
     private static void InternalMain()
