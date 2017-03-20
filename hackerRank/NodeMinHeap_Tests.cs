@@ -35,7 +35,7 @@ internal class NodeMinHeap_Tests
         for (int i = 0; i <=1000; i++)
         {
             heap.GetMin().Dist.Should().Be(i);
-            Console.Out.WriteLine($"Deletint element {i}");
+            Console.Out.WriteLine($"Deleting element {i}");
             heap.Delete(i);
         }
     }

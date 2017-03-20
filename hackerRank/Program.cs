@@ -1,10 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 internal class Solution
 {
     private static void Main(String[] args)
+    {
+//        using (var fs = File.OpenRead("../../../testData/dijkstra/input.txt"))
+//        {
+//            Console.SetIn(new StreamReader(fs));
+
+            InternalMain();
+//        }
+    }
+
+    private static void InternalMain()
     {
         int queriesCount = int.Parse(Console.ReadLine());
 
@@ -31,10 +42,10 @@ internal class Solution
             FindShortestWayToAllNodes(cities, startNode);
 
             var res = new List<int>();
-            for (int k = 1; k < cities.Count+1; k++)
+            for (int k = 1; k < cities.Count + 1; k++)
             {
-                if (k == 1)
-                     continue;
+                if (k == startNode)
+                    continue;
 
                 var n = cities[k];
                 res.Add(n.Dist == int.MaxValue ? -1 : n.Dist);
