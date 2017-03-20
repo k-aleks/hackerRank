@@ -59,8 +59,10 @@
     <Compile Include="DataStructures\MinHeapForUniqElements.cs" />
     <Compile Include="DataStructures\MinHeapForUniqElements_Tests.cs" />
     <Compile Include="DataStructures\MinHeap_Tests.cs" />
-    <Compile Include="NodeMinHeap.cs" />
-    <Compile Include="NodeMinHeap_Tests.cs" />
+    <Compile Include="DataStructures\NodeMinHeap.cs" />
+    <Compile Include="DataStructures\NodeMinHeap_Tests.cs" />
+    <Compile Include="Helpers\IntReader.cs" />
+    <Compile Include="Helpers\IntReader_Tests.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests.cs" />

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class NodeMinHeap_bak
+public class NodeMinHeap
 {
     readonly BinaryTreeIndexer indexer = new BinaryTreeIndexer();
     private readonly List<Node> list;
     private readonly Dictionary<Node, int> mapValueToIndex;
 
-    public NodeMinHeap_bak(int initialCapacity = 16)
+    public NodeMinHeap(int initialCapacity = 16)
     {
         list = new List<Node>(initialCapacity);
         mapValueToIndex = new Dictionary<Node, int>(initialCapacity);
@@ -104,4 +104,72 @@ public class NodeMinHeap_bak
             elementIndex = parentIndex;
         }
     }
+}
+
+public class Node : IEquatable<Node>
+{
+    public int Id;
+    public HashSet<Road> Connected;
+    public int Dist;
+
+    public Node(int id)
+    {
+        Id = id;
+        Connected = new HashSet<Road>();
+    }
+
+    public bool Equals(Node other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Id == other.Id;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((Node) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return Id;
+    }
+
+    public static bool operator ==(Node left, Node right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(Node left, Node right)
+    {
+        return !Equals(left, right);
+    }
+
+    private sealed class DistRelationalComparer : Comparer<Node>
+    {
+        public override int Compare(Node x, Node y)
+        {
+            if (ReferenceEquals(x, y)) return 0;
+            if (ReferenceEquals(null, y)) return 1;
+            if (ReferenceEquals(null, x)) return -1;
+            return x.Dist.CompareTo(y.Dist);
+        }
+    }
+
+    public static Comparer<Node> DistComparer { get; } = new DistRelationalComparer();
+}
+
+public struct Road
+{
+    public Road(int destination, int cost)
+    {
+        Destination = destination;
+        Cost = cost;
+    }
+
+    public int Destination;
+    public int Cost;
 }
