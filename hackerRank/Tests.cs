@@ -12,183 +12,38 @@ namespace hackerRank
     [TestFixture]
     internal class Solution_Tests
     {
-        [Test]
-        public void Test_FindShortestWayToAllNodes_1()
+        [TestCase("tabriz", "otorin", 2, 4)]
+        public void Test_GetMaxSubstringLengthInternal(string s1, string s2, int maxDixx, int expected)
         {
-            var nodes = new[]
-            {
-                new Node(1)
-                {
-                    Connected = new HashSet<Road>()
-                    {
-                        new Road(2, 24),
-                        new Road(4, 20),
-                        new Road(3, 3),
-                    }
-                },
-                new Node(2)
-                {
-                    Connected = new HashSet<Road>()
-                    {
-                        new Road(1, 24),
-                    }
-                },
-                new Node(3)
-                {
-                    Connected = new HashSet<Road>()
-                    {
-                        new Road(1, 3),
-                        new Road(4, 12),
-                    }
-                },
-                new Node(4)
-                {
-                    Connected = new HashSet<Road>()
-                    {
-                        new Road(1, 20),
-                        new Road(3, 12),
-                    }
-                },
-            }.ToDictionary(node => node.Id);
-
-            Solution.FindShortestWayToAllNodes(nodes, 1);
-
-            var res = new List<int>();
-            for (int i = 1; i < nodes.Count+1; i++)
-            {
-                if (i == 1)
-                     continue;
-
-                var n = nodes[i];
-                res.Add(n.Dist == int.MaxValue ? -1 : n.Dist);
-            }
-            res.Should().Equal(24, 3, 15);
+            var res = Solution.GetMaxSubstringLengthInternal(s1, s2, maxDixx);
+            res.Should().Be(expected);
         }
 
-        [Test]
-        public void Test_FindShortestWayToAllNodes_2()
+        [TestCase("tabriz", "torino", 2, 4)]
+        [TestCase("uvtedmbqjjazboxbephroffzguecvykbhyafuhsohmetnmdgqpihumsmoxirjrupgnocppctglnmbvolxuubohegeofgshufltgguaymvyoxpmdklbgkdkkzscsxcxcslistafhkzoisxkkqdqavjnuommxxteuxzgfvmusxlsqdueejicvbkizfbvodusbvruqxbcodzybsxazdglvxzzgnsudxfrbtqrfooprbdoxnodpblnlrypdobzgqnsigezdpkhkphonxgabnkgjsvypcrcgehiehljruykpduxoesekjfpbfpxqmyknvrjncmcretfcolzuabqzlezdyopnrsqpuhzzkmgchbsiohnydxydeytxntrpnxhatiqukhsflcifiehccbhjfgnrettuyxktgauboqulrhymjnxzqhcqsfdmmhgiepbbrmhznkfnadvlfplhcszuyzotbxkuysbqleqnypigncvicnjirkvdtdikzdyfmzeccuxmtorcaapjrsahkylcmsejsaumgmlhrofrlvkqglxcnrqmebuuuvaxmatkdnqzoxdkoxuqkrhcoqjbvbmgjrzohthnhqaanngsxqephzmqesecfccsakgznnjmhoucjtebvzigoryroprrmiidxyrtpocniqoalxqhloxcdplhuvthqsyjznbqmantrbxgoqgdnzyhvpovndgkxmsszfbaqkoimnyxsbvavxmkxhkzoedijyspvzsjknrcvradybzeanesxxuzvxmqtjabnmlcnayysgjxrfsjrcjaoyuliehuqyyoxpezfgxxhgsihqomhppjyitiyiyikomklvuoxbkemkervhucidnoynxcyflyqleagpqkgmnquueexspnoxqpapdatsfzzihiusagklunvcvaavslybundctzqdzfercjpjieobdemnnxbivroxkfhdvhqztcrlsvakyhchaluknxkpknoyrbyyrbuidvjlknssyurtvelfxfletkssjgnlveiysfkajkedvmxarptqrxpnitltailrgbcjjhoyyefdgrbbxzijryihyucszdlijikkivckzkipzclefeeypbstotofgnrovyczkeucfmlcxqyjumlavxutlqaxvtyixeshykftrmjxrzmihffngmdtssnkmvkrhveqocynehdysdevpqfpkkequfavldkibfokesqcpjhmuvamkxebfodaczprkhbblnrliullczyeotqmuyzvsibslxnatqtfarkltzjbfsyaysitcsfohbnpjzopnxeknrecknphcoerfgpzxroyvmunryapmjglacplehabtlgfczttgyvilikbinxskheksgfmaxvlgayfjfebtgsmoprknxvhzzmyaotblsdallzpdzkscgteuhfiygojbdotdorfalsxjjnnjvtdacharuhxrthmkpbobvrjcooonqqzpuvmjcsffzx",
+            "vlceyrlgrugkjoblzfxneijkrhrfgvytmmesgbcfphagtdezgjazvytozaplhfpeqxbzxefoiknedxvongyslxzlkaeisjbvgsnnauhkiivbfqkpkjiyjsyftrjtkykixfdiojerqebljlqqmttlfzdutumbsgvlohimtajbpppqznxyejzutljuuylastgbykmnyzthyqzvrtjceuhcmnzfzxseaxxzuynzxynipeidmzsroyuahxtkubeecikuayybyxrnzyafxgkazrovhgsypljpclpzqnlfojosubpfhgstvpxylxbjoqlhthiljdcsqugbgxyltydujmqcbpuytzqrbjptomiromzybicefazzmmredurkvgdrqzvdtrrsimpdzxsogsvreflykbrmleebvdxmurmpnxypetrviatqddkbdmggarlndiovgqpkutyjhkagmpcyirkrffyyvxagvpeyhhefsgcfiupmaydlcmegrhejkgmqtldhgudrltepagpgpfxoqplooskudszfvqobcckexqserdduxfmgkypgcsohcmfyrxrbvgggnfhehhkeckttxrpgrlxsrxetcdnsqesvifajnjlhtceiickvneiamkxonftamyuollbfzvjpecaquzimjpjckajvfjzcfgbhzqaougndjbjrgbvyhetpaxfjdlnrlmlstdplpyxggbokhsretpbzrddmgbuksexevratqkagtmacfcfelbpprbvtgipntbgtluuccoxpxexnyellnjcshsprjdliepcdsjjqsemkujlnzeiburrzubtfbdkuolqnoejjfkzmgxgebyygajffjttyeqojsyeeadbbyayrskmgajvexyyyxvxtcqlqsrqlelrdeuxidrpiyfjczjlauseyuqzkcyzoytubljggpbstgvcgqehpciurrjjrpxxhvsmdnrezijvqcvyzsubfidltxhijmtaprjsoieoabzxsqzvtexsxgdxbiztnqlrjocrclecpbsaeszgqzooliazpebzelvdmvxvormexinetkbtcxaxokulrboqlmmcrsrviclyxtgaymxhharimlaanfqpshuadxghtevlcajmtmqtyvokjxccieuaxpsmegmhjuaxlclmblbpkabtqrmrspsippxtydrodctnbignjoyacldgtsotovqqeejbqiaskghqfegdijlrvkdecgxzdfjlolbimzialprvsdnjljqltyczvhbtdoeechkosiydsceenaafvdgkgdlidzzoiogvjnafcsymrrkylnqjkpzvnbzgsarorudfryeitybpaqziltyplfepguixbblvzzqrcmyvfjggpsvtdgccqyfyukyxxycnetjnaavehnuehlvtaifykkazkcklfqllxreltmzmxhcqhizjymdezzjlgussulurgykaeevmpmabjjprnpxvnztfgnbqmbhue",
+            31, 40)]
+        [TestCase("iareifjvcrckltvlhlptjrkfmsgzdxaaqrsjnxsyervevfvsghstodesloepremnecaohpghcfkhacqessakgpojjgpiznebrpenssdmajlmeunjhzfsgjcqorgzekcyzicoqhrfvxfbryjoqpqckvmkvpryasfmtaejemlyzcgvfnsqystlsfplllnqniopzgeygvgybacykiqszbolkgcpyfpcjhmahbmvatvytduipisafrspshksqonpccslzheubokbyqrmakuigilajiztulojmlpksqgftaztlkcijbdqirlbpdfjhlpzqqbyjbkzqizvegudnkoxyaegecbuutpvkvxhbebrigmggnfkjapqhfulruinnlvmszxbvinnmtyfxicixyfehkoiidapooymjorqkpzzldimvufafvqbgqcotmuircepzzpuauaanssdaebxajqshbshypbscdbdjxekurpngkrcemmdvrspulhkkyvcgkmkyhuongukyjafarfxhxhyxnfduahavnxlarqlxccppasrsbsxzquvfdlxlopenrlpsohhsirbuosxqxeuvqhlrpilkmrahbvnsouuuuzloagepekmjeyipnzgeqofconrqbolsybuashpztffcqdeeqxkicnbcpaunqdtufdyhdnmvnpeoclfqrtxmpedledeyluvfjaplodyxdrgasuvmciofuvtehvrpfqpkplihqirroxfgghutogxeyxqrpdfshqjqdahjajpxnzmdtiimenbdomoqyhpdoqjtjxjnfkqhagudavpekdifjvpcpvfztqgtfrkhbnocunnhpduccisdyigmdqlenxzurcazixxsxvppsplolvloifzjtamryvqyajuetrvkzsfhndczfnpusfycauqhdmvnkgcvshqmpqngrhldcjgmahpinsctdrrdfhgbuplscfervdtpogimjcyhgovgqlbtxssnqdtouvzkgsteoyzehcgrniropfjmdzszbmaeocyeujumedksliarevuqbjcglzitizfbcbhkuffvgoggcvmakqilngnddrgrlqjoyfxptxfmraqeraxooqbjpukyqhpzopnbeyumcjmmvqyypqblenlaoezxxmiuczrqguvqoydkvliytslzvhddyobatmvpnemkmjysbabdnfydtjpetldfqtnavbdtlgjttzhspxcyyamgochsqflcupioqsuejlkvddavjdgymgplryquzqejuyojfysjnmmbjbskuzylaoikbavhuroepcedvddxchxoceukhdrmoukrjjmemopqdqsuumvkuvdgsxkosvzgpunxkiokhjxxfflcenybszkmcyjbhzxhumdxhain",
+            "asjqprroaxfhqjqapovlunzhkmzrdguevtzdngtgeadhjzxkrztkgtxqokrajbfzoyoptdzfcurafxjecedcqizkogavgrkoeqqatggngzstidjvdjdrdxnfgdqkhyonxxkmpqijfpvgmhxbblahfrrejnakvgarxdnamqlvjrmixuyuiqnpysbjahfcqyymlipigqhmpqnoijpydaatovkeqnxygmchhiqubkotlznkcvqbxfmytlapczfblanqxrexzoxqeixfyntvheplajfmbxsffhueqfizzarpeeinloczbdsspgmqkfmidiruxtxrcfuompaxafdjqmzdsxpzigtlqmvyczzvptocntaqelgjfnmgqrrkjisqanxxtqsvxlduzdunqurzitvhsunqdsykenvmncekhvqmjsvzuphvdgqsiccbgccmsratjiuafhqmycisoqkxntasfvkhhiiujrjieipoxcbbyjzrhncbcxvezqmcktglyessclepfxkeeygtyuvxtktiagrtzxcoraujlpbuynbpkxsrrsbeagaqcdezlnzqrskrashzmsigtzbkmncayzebsugkbfyxqktvhhqiihtqpnrmfotmunggufobobqffelrqfipvvrvdlttkschhrvfdfecomrrjlfmjxobudaireagdsvdpgikvusbcudrorbhjnqjhppluciblzeryqcdbyjqnpoobogtseynsklzuqouxljqlkcbetrvtgqrjgqmpjuafiyczhldmipqmytkfkloeidaokspuimoxrtdcdzyldkgeebrtxsgipvodjqaqsojuxvitpnucduudjprthyclvkzdilrsikttyndftkigbcvaicafcpzigklpczifduugucxxudnlvstaxkjrrzfrgvuusrpfzdniaqqaiyqbqqqcojtxyjboxxdpzndqrqvrhptanjsymtaeorhosjgsseiicvyektqbppecfsqllbqxffqvgonvvftxfiqznktmpcilbosyejkmyalfxjqmbvmlkalhaakjrafxxfydgafkrhaiiouvbpouqzgebqadotekylmpviiercniorpcnimcdgavpynxhfuimngalgmglagpxbcicgmjvpxpzhcavdbaltjrougvgyngfsiidyblapguheedcjzskqujulyngudjkogqbooqtqlxycvnifgbvrvhlqbufcughccxnoakyngpdlojddbbizelbqlcyqlbkfffkkzbxgjqerqijtcevixqodqbyhsmugsmdpbehxmhthyafzxbeoihumtsynguzssljknxarkzqonhtbrbckcshezbrmziribgibidsuzxkrnubrgzgebhqvuluefrxpop",
+            946, 1011)]
+        public void Test_GetMaxSubstringLength(string s1, string s2, int maxDixx, int expected)
         {
-            var nodes = new[]
-            {
-                new Node(1)
-                {
-                    Connected = new HashSet<Road>()
-                    {
-                        new Road(2, 24),
-                        new Road(4, 20),
-                        new Road(3, 3),
-                    }
-                },
-                new Node(2)
-                {
-                    Connected = new HashSet<Road>()
-                    {
-                        new Road(1, 24),
-                    }
-                },
-                new Node(3)
-                {
-                    Connected = new HashSet<Road>()
-                    {
-                        new Road(1, 3),
-                        new Road(4, 12),
-                    }
-                },
-                new Node(4)
-                {
-                    Connected = new HashSet<Road>()
-                    {
-                        new Road(1, 20),
-                        new Road(3, 12),
-                    }
-                },
-                new Node(5)
-                {
-                    Connected = new HashSet<Road>()
-                    {
-                    }
-                },
-            }.ToDictionary(node => node.Id);
-
-            Solution.FindShortestWayToAllNodes(nodes, 1);
-
-            var res = new List<int>();
-            for (int i = 1; i < nodes.Count+1; i++)
-            {
-                if (i == 1)
-                     continue;
-
-                var n = nodes[i];
-                res.Add(n.Dist == int.MaxValue ? -1 : n.Dist);
-            }
-            res.Should().Equal(24, 3, 15, -1);
+            var res = Solution.GetMaxSubstringLength(s1, s2, maxDixx);
+            res.Should().Be(expected);
         }
 
-        [Test]
-        public void Test_FindShortestWayToAllNodes_3()
+        [TestCase("torino", 0, "torino")]
+        [TestCase("torino", 1, "orinot")]
+        [TestCase("torino", 2, "rinoto")]
+        [TestCase("torino", 3, "inotor")]
+        [TestCase("torino", 4, "notori")]
+        [TestCase("torino", 5, "otorin")]
+        public void Test_RollTheString(string s, int index,  string expected)
         {
-            var nodes = new[]
-            {
-                new Node(1)
-                {
-                    Connected = new HashSet<Road>()
-                    {
-                        new Road(2, 24),
-                        new Road(4, 20),
-                        new Road(3, 3),
-                    }
-                },
-                new Node(2)
-                {
-                    Connected = new HashSet<Road>()
-                    {
-                        new Road(1, 24),
-                    }
-                },
-                new Node(3)
-                {
-                    Connected = new HashSet<Road>()
-                    {
-                        new Road(1, 3),
-                        new Road(4, 12),
-                    }
-                },
-                new Node(4)
-                {
-                    Connected = new HashSet<Road>()
-                    {
-                        new Road(1, 20),
-                        new Road(3, 12),
-                    }
-                },
-                new Node(5)
-                {
-                    Connected = new HashSet<Road>()
-                    {
-                        new Road(6, 1)
-                    }
-                },
-                new Node(6)
-                {
-                    Connected = new HashSet<Road>()
-                    {
-                        new Road(5, 1)
-                    }
-                },
-            }.ToDictionary(node => node.Id);
-
-            Solution.FindShortestWayToAllNodes(nodes, 1);
-
-            var res = new List<int>();
-            for (int i = 1; i < nodes.Count+1; i++)
-            {
-                if (i == 1)
-                     continue;
-
-                var n = nodes[i];
-                res.Add(n.Dist == int.MaxValue ? -1 : n.Dist);
-            }
-            res.Should().Equal(24, 3, 15, -1, -1);
+            var res = Solution.RollTheString(s, index);
+            res.Should().Be(expected);
         }
+
+
     }
 }

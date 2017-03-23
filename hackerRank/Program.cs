@@ -1,88 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+class Solution {
 
-internal class Solution
-{
-    private static void Main(String[] args)
+    static void Main(String[] args)
     {
-        InternalMain();
-    }
-
-    private static void InternalMain()
-    {
-        int queriesCount = int.Parse(Console.ReadLine());
-        var intReader = new IntReader();
-
-        for (int i = 0; i < queriesCount; i++)
-        {
-            int[] p = Console.ReadLine().Split(' ').Select(s => int.Parse(s)).ToArray();
-            int citiesCount = p[0];
-            var cities = new Dictionary<int, Node>(citiesCount);
-            for (int j = 1; j <= citiesCount; j++)
-            {
-                cities.Add(j, new Node(j) {Connected = new HashSet<Road>()});
-            }
-            int roadsCount = p[1];
-            for (int j = 0; j < roadsCount; j++)
-            {
-                var line = Console.ReadLine();
-                intReader.StartNew(line);
-                int city1 = intReader.ReadNext();
-                int city2 = intReader.ReadNext();
-                int roadCost = intReader.ReadNext();
-                cities[city1].Connected.Add(new Road(city2, roadCost));
-                cities[city2].Connected.Add(new Road(city1, roadCost));
-            }
-            int startNode = int.Parse(Console.ReadLine());
-            FindShortestWayToAllNodes(cities, startNode);
-
-            var res = new List<int>();
-            for (int k = 1; k < cities.Count + 1; k++)
-            {
-                if (k == startNode)
-                    continue;
-
-                var n = cities[k];
-                res.Add(n.Dist == int.MaxValue ? -1 : n.Dist);
-            }
-            Console.Out.WriteLine(string.Join(" ", res));
+        int cases = int.Parse(Console.ReadLine());
+        for (int i=0; i<cases; i++) {
+            string[] p = Console.ReadLine().Split(' ');
+            int s = int.Parse(p[0]);
+            int res = GetMaxSubstringLength(p[1], p[2], s);
+            Console.WriteLine(res);
         }
     }
 
-    public static void FindShortestWayToAllNodes(Dictionary<int, Node> allNodes, int startNode)
+    public static int GetMaxSubstringLength(string s1, string s2, int maxErrorLevel)
     {
-        int nodesCount = allNodes.Count;
-        var visited = new HashSet<int>();
-
-        var heap = new NodeMinHeap(nodesCount);
-        foreach (var node in allNodes.Values)
+        int maxSubstringLength = int.MinValue;
+        for (int i=0; i<s1.Length; i++)
         {
-            node.Dist = (node.Id == startNode) ? 0 : int.MaxValue;
-            heap.Add(node);
+            string tmp = RollTheString(s2, i);
+
+            int localMaxSubstringLength = GetMaxSubstringLengthInternal(s1, tmp, maxErrorLevel);
+            if (maxSubstringLength < localMaxSubstringLength)
+                maxSubstringLength = localMaxSubstringLength;
         }
+        return maxSubstringLength;
+    }
 
-        while (heap.Count > 0 && heap.GetMin().Dist < int.MaxValue)
+    public static string RollTheString(string s, int i)
+    {
+        return (i > 0) ? s.Substring(i) + s.Substring(0, i) : s;
+    }
+
+    public static int GetMaxSubstringLengthInternal(string s1, string s2, int maxErrorLevel)
+    {
+        int maxSubstringLen = 0;
+        int[] diff = new int[s1.Length];
+        int j = 0;
+        for (int i=0; i<s1.Length; i++)
         {
-            var node = heap.PopMin();
-            visited.Add(node.Id);
-            foreach (var road in node.Connected)
+            int delta = (s1[i] == s2[i]) ? 0 : 1;
+            diff[i] = (i == 0) ? delta : diff[i-1] + delta;
+
+            int errorLevel = diff[i] - ((j == 0) ? 0 : diff[j-1]);
+            if (errorLevel > maxErrorLevel)
             {
-                if (!visited.Contains(road.Destination))
-                {
-                    var destNode = allNodes[road.Destination];
-                    var newDistance = node.Dist + road.Cost;
-                    if (newDistance < destNode.Dist)
-                    {
-                        destNode.Dist = newDistance;
-                        heap.DecreaseKey(destNode);
-                    }
-                }
+                int currentSubstringLength = i-j;
+                if (maxSubstringLen < currentSubstringLength)
+                    maxSubstringLen = currentSubstringLength;
+                j++;
             }
         }
+        int finalSubstringLength = s1.Length-j;
+        if (maxSubstringLen < finalSubstringLength)
+            maxSubstringLen = finalSubstringLength;
+        return maxSubstringLen;
     }
 }
-
-
-
