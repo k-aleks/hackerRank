@@ -21,7 +21,7 @@ internal class Solution
         var newNode = new Node()
         {
             val = value,
-            ht = 1
+            ht = 0
         };
 
         if (treeRoot == null)
@@ -78,7 +78,6 @@ internal class Solution
 
             if (balanceFactor == 2)
             {
-
                 return root;
             }
 
