@@ -51,7 +51,7 @@ internal class Solution
         if (!RecalculateHeight(path))
             return treeRoot;
 
-        RebalanceIfNeeded(path, newNode);
+        treeRoot = RebalanceIfNeeded(path, newNode);
 
         return treeRoot;
     }
@@ -125,8 +125,7 @@ internal class Solution
         }
     }
 
-
-    private static int GetBalanceFactor(Node node)
+    public static int GetBalanceFactor(Node node)
     {
         return GetNodeHight(node.left) - GetNodeHight(node.right);
     }
@@ -153,7 +152,7 @@ internal class Solution
     private static int GetNodeHight(Node node)
     {
         if (node == null)
-            return 0;
+            return -1;
         return node.ht;
     }
 }
@@ -161,6 +160,11 @@ internal class Solution
 
 class Node
 {
+    public Node(int val = 0)
+    {
+        this.val = val;
+    }
+
     public int val;   //Value
     public int ht = -1;      //Height
     public Node left;   //Left child
